@@ -10,9 +10,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ForeignKey;
 import java.util.List;
 import java.time.OffsetDateTime;
-
-import org.hibernate.mapping.List;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;

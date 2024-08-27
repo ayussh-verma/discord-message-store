@@ -1,18 +1,5 @@
 package com.ayusshverma.discord_message_store.models;
 
-/* 
- * class Message(Base):
-    """Database model representing a message sent in a Discord server."""
-
-    __tablename__ = "messages"
-
-    id: Mapped[str] = mapped_column(primary_key=True)
-    channel_id: Mapped[str] = mapped_column(ForeignKey("channels.id", ondelete="CASCADE"), index=True)
-    thread_id: Mapped[str | None] = mapped_column(ForeignKey("threads.id", ondelete="CASCADE"), index=True)
-    author_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
-    created_at = mapped_column(TZDateTime())
-    is_deleted: Mapped[bool] = mapped_column(default=False)
-*/
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
