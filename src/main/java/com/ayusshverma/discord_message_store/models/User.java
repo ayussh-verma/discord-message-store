@@ -9,6 +9,8 @@ import java.time.OffsetDateTime;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -54,5 +56,6 @@ public class User {
     private boolean pending = false;
 
     @OneToMany(mappedBy = "author", orphanRemoval = true)
+    @JsonIgnore
     private List<Message> messages;
 }
