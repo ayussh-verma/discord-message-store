@@ -74,13 +74,13 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user, UriComponentsBuilder uriComponentsBuilder) {
-        Optional<User> currentUser = userRepo.findById(user.getId());
+        Optional<User> currentUser = userRepo.findById(user.id);
         if (!currentUser.isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
         User createdUser = userRepo.save(user);
-        URI location = uriComponentsBuilder.path("/users/{id}").buildAndExpand(createdUser.getId()).toUri();
+        URI location = uriComponentsBuilder.path("/users/{id}").buildAndExpand(createdUser.id).toUri();
         return ResponseEntity.created(location).body(createdUser);
     }
 }
