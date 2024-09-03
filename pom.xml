@@ -28,12 +28,21 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
+    	<org.mapstruct.version>1.6.0</org.mapstruct.version>
+        <openapi-generator-maven-plugin.version>6.3.0</openapi-generator-maven-plugin.version>
+        <build-helper-maven-plugin.version>3.2.0</build-helper-maven-plugin.version>
 	</properties>
 	<dependencies>
+	    <dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${org.mapstruct.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<scope>annotationProcessor</scope>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -70,6 +79,10 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
 	</dependencies>
 
 	<build>
@@ -78,6 +91,67 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.8.1</version>
+            <configuration>
+                <source>1.8</source> <!-- depending on your project -->
+                <target>1.8</target> <!-- depending on your project -->
+                <annotationProcessorPaths>
+                    <path>
+                        <groupId>org.mapstruct</groupId>
+                        <artifactId>mapstruct-processor</artifactId>
+                        <version>${org.mapstruct.version}</version>
+                    </path>
+                    <!-- other annotation processors -->
+                </annotationProcessorPaths>
+            </configuration>
+        </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <!-- RELEASE_VERSION -->
+                <version>${openapi-generator-maven-plugin.version}</version>
+                <!-- /RELEASE_VERSION -->
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/openapi.yml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <library>spring-boot</library>
+
+                            <!-- Only enabling model andopenapi-generator-maven-plugin API generation -->
+                            <modelNameSuffix>Dto</modelNameSuffix>
+                            <apiPackage>org.ayusshverma.discord_message_store.api</apiPackage>
+                            <generateModels>true</generateModels>
+                            <modelPackage>org.ayusshverma.discord_message_store.dto</modelPackage>
+                            <!--
+                            <generateSupportingFiles>true</generateSupportingFiles>
+                            <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
+                            -->
+                            <generateApis>true</generateApis>
+                            <configOptions>
+                                <!-- RestController implementation is provided by Petclinic developers -->
+                                <interfaceOnly>true</interfaceOnly>
+                                <!-- Activating Java 8 features -->
+                                <performBeanValidation>true</performBeanValidation>
+                                <dateLibrary>java8</dateLibrary>
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <openApiNullable>false</openApiNullable>
+                                <!-- override the default library to jersey2 -->
+                                <serializationLibrary>jackson</serializationLibrary>
+                                <!-- switch documentation provider to springdoc -->
+                                <documentationProvider>springdoc</documentationProvider>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
 		</plugins>
 	</build>
 </project>

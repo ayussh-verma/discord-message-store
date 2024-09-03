@@ -1,0 +1,376 @@
+# File based on the project
+
+openapi: 3.0.1
+info:
+  title: Discord Message Store
+  description: A simple API to store messages and other Discord objects
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 0.0.1
+  contact:
+    name: Ayussh Verma
+    email: ayussh.verma@maersk.com
+servers:
+  - url: http://localhost:8080/api/v0
+    description: Local server
+tags:
+  - name: failing
+    description: Endpoints that are expected to fail.
+  - name: user
+    description: Endpoints related to Discord users.
+paths:
+  /fail:
+    get:
+      tags:
+        - failing
+      operationId: failingRequest
+      summary: Always fails
+      description: Produces a sample error response.
+      responses:
+        '500':
+          description: Internal server error
+  /users:
+    get:
+      tags:
+        - user
+      operationId: getUsers
+      summary: Get all users
+      description: Returns a list of all users.
+      responses:
+        200:
+          description: User details found and returned.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        500:
+          description: Server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestError'
+
+    post:
+      tags:
+        - user
+      operationId: createUser
+      summary: Create a new user
+      description: Creates a new user.
+      requestBody:
+        required: true
+        description: The user's details.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserFields'
+      responses:
+        201:
+          description: User successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestError'
+        500:
+          description: Server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestError'
+
+  /users/{userId}:
+    get:
+      tags:
+        - user
+      operationId: getUser
+      summary: Get a single user by ID
+      description: Returns a single user or a 404 response.
+      parameters:
+        - name: userId
+          in: path
+          description: The Discord snowflake ID.
+          required: true
+          schema:
+            type: string
+            minLength: 17
+            maxLength: 19
+            pattern: '^\d*$'
+            example: '123456789012345678'
+
+      responses:
+        200:
+          description: User's details found and returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestError'
+        404:
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestError'
+        500:
+          description: Server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestError'
+
+    put:
+      tags:
+        - user
+      operationId: updateUser
+      summary: Update an existing user's details
+      description: Updates an existing user's details with the provided data.
+      parameters:
+        - name: userId
+          in: path
+          description: The Discord snowflake ID.
+          required: true
+          schema:
+            type: string
+            minLength: 17
+            maxLength: 19
+            pattern: '^\d*$'
+            example: '123456789012345678'
+      requestBody:
+        required: true
+        description: The user's details to use for the update.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserFields'
+      responses:
+        200:
+          description: User successfully updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestError'
+        404:
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestError'
+        500:
+          description: Server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestError'
+
+    delete:
+      tags:
+        - user
+      operationId: deleteUser
+      summary: Delete a user by ID
+      description: Returns the user's details pre-deletion or a 404.
+      parameters:
+        - name: userId
+          in: path
+          description: The Discord snowflake ID.
+          required: true
+          schema:
+            type: string
+            minLength: 17
+            maxLength: 19
+            pattern: '^\d*$'
+            example: '123456789012345678'
+      responses:
+        200:
+          description: User's details found and successfully returned. User got successfully deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestError'
+        404:
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestError'
+        500:
+          description: Server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestError'
+components:
+  schemas:
+    RestError:
+      title: REST Error
+      description: The schema for all error responses.
+      type: object
+      properties:
+        status:
+          title: Status
+          description: The HTTP status code.
+          type: integer
+          format: int32
+          minimum: 100
+          maximum: 599
+          example: 400
+          readOnly: true
+        error:
+          title: Error
+          description: The short error message.
+          type: string
+          example: Bad Request
+          readOnly: true
+        path:
+          title: Path
+          description: The path of the URL for this request.
+          type: string
+          format: uri
+          example: '/api/v0/users'
+          readOnly: true
+        timestamp:
+          title: Timestamp
+          description: The UTC date and time the error occurred.
+          type: string
+          format: date-time
+          example: '2019-08-21T21:41:46.158+0000'
+          readOnly: true
+        message:
+          title: Message
+          description: The long error message.
+          type: string
+          example: 'Request failed schema validation'
+          readOnly: true
+        schemaValidationErrors:
+          title: Schema validation errors
+          description: Validation errors against the OpenAPI schema.
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationMessage'
+        trace:
+          title: Trace
+          description: The stacktrace for this error.
+          type: string
+          example: 'com.atlassian.oai.validator.springmvc.InvalidRequestException: ...'
+          readOnly: true
+      required:
+        - status
+        - error
+        - path
+        - timestamp
+        - message
+        - schemaValidationErrors
+    ValidationMessage:
+      title: Validation message
+      description: Messages describing a validation error.
+      type: object
+      properties:
+        message:
+          title: Message
+          description: The validation message.
+          type: string
+          example: "[Path '/lastName'] Instance type (null) does not match any allowed primitive type (allowed: [\"string\"])"
+          readOnly: true
+      required:
+        - message
+      additionalProperties: true
+    UserFields:
+      title: User fields
+      description: Editable fields of a user.
+      type: object
+      properties:
+        id:
+          title: Snowflake ID
+          description: The unique ID of the user.
+          type: string
+          minLength: 17
+          maxLength: 19
+          pattern: '^\d*$'
+          example: '123456789012345678'
+        name:
+          title: Name
+          description: The user's username.
+          type: string
+          minLength: 2
+          maxLength: 32
+          example: ayusshverma
+        avatarHash:
+          title: Avatar hash
+          description: The user's avatar hash.
+          type: string
+          example: 'a_1234567890abcdef'
+        guildAvatarHash:
+          title: Guild avatar hash
+          description: The user's guild avatar hash.
+          type: string
+          example: 'a_1234567890abcdef'
+        joinedAt:
+          title: Joining time
+          description: The UTC date and time the user joined the guild.
+          type: string
+          format: date-time
+          example: '2019-08-21T21:41:46.158+0000'
+        createdAt:
+          title: Creation time
+          description: The UTC date and time the user was created.
+          type: string
+          format: date-time
+          example: '2019-08-21T21:41:46.158+0000'
+        bot:
+          title: Bot
+          description: Whether the user is a bot.
+          type: boolean
+          example: false
+        inGuild:
+          title: Guild membership
+          description: Whether the user is in the guild.
+          type: boolean
+          example: true
+      required:
+        - id
+        - name
+        - createdAt
+        - bot
+        - inGuild
+    User:
+      title: User
+      description: A Discord user.
+      allOf:
+        - $ref: '#/components/schemas/UserFields'
+        - type: object
+          properties:
+            id:
+              title: ID
+              description: The unique Discord snowflake ID of the user.
+              type: string
+              minLength: 17
+              maxLength: 19
+              pattern: '^\d*$'
+              example: '123456789012345678'
+              readOnly: true
+          required:
+            - id
