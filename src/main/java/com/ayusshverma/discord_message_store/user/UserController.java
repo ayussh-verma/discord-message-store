@@ -1,7 +1,4 @@
-package com.ayusshverma.discord_message_store.controllers;
-
-import com.ayusshverma.discord_message_store.models.User;
-import com.ayusshverma.discord_message_store.repos.UserRepo;
+package com.ayusshverma.discord_message_store.user;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,20 +35,20 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserEntity>> getAllUsers() {
         return ResponseEntity.ok(userRepo.findAll());
     }
 
     @Operation(summary = "Get a specific user", description = "Returns a single user", tags = { "User" })
     @ApiResponses(
         value = {
-            @ApiResponse(responseCode = "200", description = "User found", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = User.class)) }),
+            @ApiResponse(responseCode = "200", description = "User found", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = UserEntity.class)) }),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
         }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<User> getASpecificUser(@PathVariable String id) {
-        Optional<User> user = userRepo.findById(id);
+    public ResponseEntity<UserEntity> getASpecificUser(@PathVariable String id) {
+        Optional<UserEntity> user = userRepo.findById(id);
         return user.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
@@ -62,24 +59,24 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> editUserDetails(@PathVariable String id, @RequestBody User user) {
-        Optional<User> currentUser = userRepo.findById(id);
+    public ResponseEntity<UserEntity> editUserDetails(@PathVariable String id, @RequestBody UserEntity user) {
+        Optional<UserEntity> currentUser = userRepo.findById(id);
         if (currentUser.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        User updatedUser = userRepo.save(user);
+        UserEntity updatedUser = userRepo.save(user);
         return ResponseEntity.ok(updatedUser);
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user, UriComponentsBuilder uriComponentsBuilder) {
-        Optional<User> currentUser = userRepo.findById(user.getId());
+    public ResponseEntity<UserEntity> createUser(@RequestBody UserEntity user, UriComponentsBuilder uriComponentsBuilder) {
+        Optional<UserEntity> currentUser = userRepo.findById(user.getId());
         if (!currentUser.isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        User createdUser = userRepo.save(user);
+        UserEntity createdUser = userRepo.save(user);
         URI location = uriComponentsBuilder.path("/users/{id}").buildAndExpand(createdUser.getId()).toUri();
         return ResponseEntity.created(location).body(createdUser);
     }

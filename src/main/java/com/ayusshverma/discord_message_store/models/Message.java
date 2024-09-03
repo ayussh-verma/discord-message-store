@@ -12,6 +12,9 @@ import jakarta.persistence.Index;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.ConstraintMode;
 import java.time.OffsetDateTime;
+
+import com.ayusshverma.discord_message_store.user.UserEntity;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -40,7 +43,7 @@ public class Message {
 
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false, foreignKey = @ForeignKey(name = "author_fk", value = ConstraintMode.CONSTRAINT))
-    private User author;
+    private UserEntity author;
 
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;

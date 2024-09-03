@@ -1,4 +1,4 @@
-package com.ayusshverma.discord_message_store.models;
+package com.ayusshverma.discord_message_store.user;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -20,7 +20,7 @@ import lombok.AllArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class UserEntity {
     @Id
     @Column(length = 64)
     private String id;
