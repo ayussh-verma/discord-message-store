@@ -11,13 +11,14 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
 public class SwaggerConfig {
 
     @Bean
     OpenAPI customOpenAPI() {
-        return new OpenAPI().components(new Components()).info(swaggerInfo());
+        return new OpenAPI().components(new Components()).info(swaggerInfo()).addServersItem(swaggerServer());
     }
 
     private Info swaggerInfo() {
@@ -45,4 +46,7 @@ public class SwaggerConfig {
         return license;
     }
 
+    public Server swaggerServer() {
+        return new Server().url("http://localhost:8080/");
+    }
 }
