@@ -28,7 +28,7 @@
 
         <!-- Maven plugins -->
         <jacoco.version>0.8.11</jacoco.version>
-        <openapi-generator-maven-plugin.version>6.6.0</openapi-generator-maven-plugin.version>
+        <openapi-generator-maven-plugin.version>7.7.0</openapi-generator-maven-plugin.version>
         <build-helper-maven-plugin.version>3.2.0</build-helper-maven-plugin.version>
 
         <!-- Docker -->
@@ -109,6 +109,21 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-testcontainers</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>test</scope>
+		</dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
