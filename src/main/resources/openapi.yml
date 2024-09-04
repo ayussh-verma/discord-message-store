@@ -53,6 +53,51 @@ paths:
               schema:
                 $ref: '#/components/schemas/RestError'
 
+  /users/{userId}:
+    get:
+      tags:
+        - user
+      operationId: getUser
+      summary: Get a single user by ID
+      description: Returns a single user or a 404 response.
+      parameters:
+        - name: userId
+          in: path
+          description: The Discord snowflake ID.
+          required: true
+          schema:
+            type: string
+            minLength: 17
+            maxLength: 19
+            pattern: '^\d*$'
+            example: '123456789012345678'
+
+      responses:
+        200:
+          description: User's details found and returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestError'
+        404:
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestError'
+        500:
+          description: Server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestError'
+
     post:
       tags:
         - user
@@ -88,51 +133,6 @@ paths:
                 $ref: '#/components/schemas/User'
         400:
           description: Bad request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RestError'
-        500:
-          description: Server error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RestError'
-
-  /users/{userId}:
-    get:
-      tags:
-        - user
-      operationId: getUser
-      summary: Get a single user by ID
-      description: Returns a single user or a 404 response.
-      parameters:
-        - name: userId
-          in: path
-          description: The Discord snowflake ID.
-          required: true
-          schema:
-            type: string
-            minLength: 17
-            maxLength: 19
-            pattern: '^\d*$'
-            example: '123456789012345678'
-
-      responses:
-        200:
-          description: User's details found and returned.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        400:
-          description: Bad request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RestError'
-        404:
-          description: User not found.
           content:
             application/json:
               schema:
