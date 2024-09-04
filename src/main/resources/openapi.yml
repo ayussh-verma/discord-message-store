@@ -12,7 +12,7 @@ info:
     name: Ayussh Verma
     email: ayussh.verma@maersk.com
 servers:
-  - url: http://localhost:8080/api/v0
+  - url: http://localhost:8080/
     description: Local server
 tags:
   - name: failing
@@ -59,6 +59,18 @@ paths:
       operationId: createUser
       summary: Create a new user
       description: Creates a new user.
+      parameters:
+        - name: userId
+          in: path
+          description: The Discord snowflake ID.
+          required: true
+          schema:
+            type: string
+            minLength: 17
+            maxLength: 19
+            pattern: '^\d*$'
+            example: '123456789012345678'
+
       requestBody:
         required: true
         description: The user's details.
@@ -66,6 +78,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserFields'
+
       responses:
         201:
           description: User successfully created.
@@ -250,7 +263,7 @@ components:
           description: The path of the URL for this request.
           type: string
           format: uri
-          example: '/api/v0/users'
+          example: '/users'
           readOnly: true
         timestamp:
           title: Timestamp
@@ -303,14 +316,6 @@ components:
       description: Editable fields of a user.
       type: object
       properties:
-        id:
-          title: Snowflake ID
-          description: The unique ID of the user.
-          type: string
-          minLength: 17
-          maxLength: 19
-          pattern: '^\d*$'
-          example: '123456789012345678'
         name:
           title: Name
           description: The user's username.
@@ -351,11 +356,8 @@ components:
           type: boolean
           example: true
       required:
-        - id
         - name
         - createdAt
-        - bot
-        - inGuild
     User:
       title: User
       description: A Discord user.
