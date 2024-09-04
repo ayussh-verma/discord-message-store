@@ -7,6 +7,7 @@ import com.ayusshverma.discord_message_store.entities_base.NamedBaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
+import org.hibernate.annotations.ColumnDefault;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,8 +34,10 @@ class UserEntity extends NamedBaseEntity {
     private OffsetDateTime createdAt;
 
     @Column(name = "bot", nullable = false)
+    @ColumnDefault("false")
     private boolean bot = false;
 
     @Column(name = "in_guild", nullable = false)
-    private boolean inGuild = false;
+    @ColumnDefault("true")
+    private boolean inGuild = true;
 }
