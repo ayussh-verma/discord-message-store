@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import com.ayusshverma.discord_message_store.dto.UserDto;
 import com.ayusshverma.discord_message_store.dto.UserFieldsDto;
-import com.ayusshverma.discord_message_store.exceptions.UserExistsException;
+import com.ayusshverma.discord_message_store.exceptions.UserConflictException;
 import com.ayusshverma.discord_message_store.exceptions.UserNotFoundException;
 
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ class UserService {
         UserEntity userEntity = userMapper.toUserEntity(id, userFieldsDto);
 
         if (userRepo.existsById(userEntity.getId())) {
-            throw new UserExistsException();
+            throw UserConflictException.fromUserId(id);
         }
         userRepo.save(userEntity);
         return userMapper.toUserDto(userEntity);
@@ -36,14 +36,14 @@ class UserService {
     public UserDto getUser(String userId) {
         return userRepo.findById(userId)
                 .map(userMapper::toUserDto)
-                .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(() -> UserNotFoundException.fromUserId(userId));
     }
 
     @Transactional
     public UserDto updateUser(String id, UserFieldsDto userFieldsDto) {
         UserEntity userEntity = userMapper.toUserEntity(id, userFieldsDto);
         if (!userRepo.existsById(userEntity.getId())) {
-            throw new UserNotFoundException();
+            throw UserNotFoundException.fromUserId(id);
         }
         userRepo.save(userEntity);
         return userMapper.toUserDto(userEntity);
@@ -59,7 +59,7 @@ class UserService {
     @Transactional
     public UserDto deleteUser(String userId) {
         UserEntity userEntity = userRepo.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(() -> UserNotFoundException.fromUserId(userId));
         userRepo.delete(userEntity);
         return userMapper.toUserDto(userEntity);
     }
