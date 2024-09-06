@@ -28,8 +28,7 @@ class UserService {
         if (userRepo.existsById(userEntity.getId())) {
             throw UserConflictException.fromUserId(id);
         }
-        userRepo.save(userEntity);
-        return userMapper.toUserDto(userEntity);
+        return userMapper.toUserDto(userRepo.save(userEntity));
     }
 
     @Transactional(readOnly = true)
@@ -45,8 +44,7 @@ class UserService {
         if (!userRepo.existsById(userEntity.getId())) {
             throw UserNotFoundException.fromUserId(id);
         }
-        userRepo.save(userEntity);
-        return userMapper.toUserDto(userEntity);
+        return userMapper.toUserDto(userRepo.save(userEntity));
     }
 
     @Transactional(readOnly = true)
