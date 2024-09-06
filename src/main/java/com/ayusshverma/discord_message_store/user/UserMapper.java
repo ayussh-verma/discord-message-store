@@ -12,4 +12,6 @@ public interface UserMapper {
     UserEntity toUserEntity(UserDto userDto);
 
     UserEntity toUserEntity(String id, UserFieldsDto userFieldsDto);
+
+    UserFieldsDto toUserFieldsDto(UserDto userDto);
 }

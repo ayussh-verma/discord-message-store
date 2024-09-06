@@ -57,4 +57,13 @@ class UserRepoTest {
         int count = userRepo.deleteByIdReturningCount("2");
         assertThat(count).isEqualTo(0);
     }
+
+    @Test
+    void shouldntDeleteInvalidUserWithSqlInjection() {
+        int count = userRepo.deleteByIdReturningCount("1; DROP TABLE users");
+        assertThat(count).isEqualTo(0);
+
+        count = userRepo.deleteByIdReturningCount("1");
+        assertThat(count).isEqualTo(1);
+    }
 }
