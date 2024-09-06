@@ -9,8 +9,8 @@ public class UserNotFoundException extends EntityNotFoundException {
         super(message);
     }
 
-    public static UserConflictException fromUserId(String userId) {
-        return new UserConflictException(String.format(DEFAULT_MESSAGE_TEMPLATE, userId));
+    public static UserNotFoundException fromUserId(String userId) {
+        return new UserNotFoundException(String.format(DEFAULT_MESSAGE_TEMPLATE, userId));
     }
 
 }
