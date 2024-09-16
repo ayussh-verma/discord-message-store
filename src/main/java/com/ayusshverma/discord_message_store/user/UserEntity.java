@@ -21,7 +21,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 class UserEntity extends NamedBaseEntity {
-     @Column(name = "avatar_hash", nullable = true, length = 200)
+    @Column(name = "avatar_hash", nullable = true, length = 200)
     private String avatarHash;
 
     @Column(name = "guild_avatar_hash", nullable = true, length = 200)
