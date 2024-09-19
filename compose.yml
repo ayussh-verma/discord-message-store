@@ -25,10 +25,19 @@ services:
 
   discord-message-store-server:
     build: .
+    develop:
+      watch:
+        - path: src/main/
+          action: rebuild
+        - path: pom.xml
+          action: rebuild
+        # Enable the following if you want to run tests
+        # - path: src/main/test/
+        #   action: rebuild
     logging: *default-logging
     restart: unless-stopped
     ports:
-      - "8100:8080"
+      - "8100:8100"
     depends_on:
       postgres:
         condition: service_healthy
