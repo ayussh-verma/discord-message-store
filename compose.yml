@@ -1,0 +1,45 @@
+x-logging: &default-logging
+    driver: json-file
+    options:
+      max-file: "5"
+      max-size: "10m"
+
+services:
+  postgres:
+    image: postgres:16.4-alpine
+    logging: *default-logging
+    restart: unless-stopped
+    volumes:
+      - db-data:/var/lib/postgresql/data/
+    ports:
+      - "5500:5432"
+    environment:
+      POSTGRES_USER: disc-msg-store-server
+      POSTGRES_PASSWORD: disc-msg-store-server
+      POSTGRES_DB: disc-msg-store-server
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U disc-msg-store-server"]
+      interval: 2s
+      timeout: 1s
+      retries: 5
+
+  discord-message-store-server:
+    build: .
+    logging: *default-logging
+    restart: unless-stopped
+    ports:
+      - "8100:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DISC-MSG-STORE-SERVER-DB-JDBC-URL: jdbc:postgresql://postgres:5432/disc-msg-store-server
+      SPRING_PROFILES_ACTIVE: dev,override
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 2s
+      timeout: 1s
+      retries: 5
+
+volumes:
+  db-data:

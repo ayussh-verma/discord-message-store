@@ -1,0 +1,8 @@
+# Ignore Everything
+*
+
+# Except the following
+!src
+!pom.xml
+!mvnw
+!.mvn/wrapper
