@@ -11,9 +11,7 @@ info:
   contact:
     name: Ayussh Verma
     email: ayussh.verma@maersk.com
-servers:
-  - url: http://localhost:8080/
-    description: Local server
+# TODO: Dynamic server section?
 tags:
   - name: failing
     description: Endpoints that are expected to fail.

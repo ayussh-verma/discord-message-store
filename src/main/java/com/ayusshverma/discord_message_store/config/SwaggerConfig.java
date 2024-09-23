@@ -16,6 +16,12 @@ import io.swagger.v3.oas.models.servers.Server;
 @Configuration
 public class SwaggerConfig {
 
+    private final AppConfig appConfig;
+
+    public SwaggerConfig(AppConfig appConfig) {
+        this.appConfig = appConfig;
+    }
+
     @Bean
     OpenAPI customOpenAPI() {
         return new OpenAPI().components(new Components()).info(swaggerInfo()).addServersItem(swaggerServer());
@@ -47,6 +53,6 @@ public class SwaggerConfig {
     }
 
     public Server swaggerServer() {
-        return new Server().url("http://localhost:8080/");
+        return new Server().url(appConfig.getApiBaseUrl());
     }
 }
