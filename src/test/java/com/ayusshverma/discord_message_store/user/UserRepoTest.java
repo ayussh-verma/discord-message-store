@@ -5,23 +5,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import com.ayusshverma.discord_message_store.ContainerTest;
 
 import java.time.OffsetDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Testcontainers
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class UserRepoTest {
-    @Container
-    @ServiceConnection
-    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16.0");
-
+class UserRepoTest extends ContainerTest {
     @Autowired
     private UserRepo userRepo;
 
@@ -35,12 +27,6 @@ class UserRepoTest {
         userEntity.setCreatedAt(OffsetDateTime.parse("2024-09-04T08:19:46.055205025Z"));
         userEntity.setInGuild(true);
         userRepo.save(userEntity);
-    }
-
-    @Test
-    void connectionEstablished() {
-        assertThat(postgres.isCreated()).isTrue();
-        assertThat(postgres.isRunning()).isTrue();
     }
 
     @Test
