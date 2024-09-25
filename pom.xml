@@ -118,6 +118,14 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <image>
+                        <!-- Needed for health checks, see https://stackoverflow.com/a/75899112 -->
+                        <env>
+                            <BP_HEALTH_CHECKER_ENABLED>true</BP_HEALTH_CHECKER_ENABLED>
+                        </env>
+                        <buildpacks>
+                            <buildpack>urn:cnb:builder:paketo-buildpacks/java</buildpack>
+                            <buildpack>gcr.io/paketo-buildpacks/health-checker:latest</buildpack>
+                        </buildpacks>
                         <bindings>
                             <binding>${basedir}/bindings/ca-certificates:/platform/bindings/ca-certificates</binding>
                         </bindings>
