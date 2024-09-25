@@ -148,6 +148,8 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
+                            <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
+
                             <inputSpec>${project.basedir}/src/main/resources/openapi.yaml</inputSpec>
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
