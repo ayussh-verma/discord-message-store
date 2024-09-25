@@ -32,9 +32,6 @@ class UserDtoJsonTest {
     @ParameterizedTest
     @MethodSource("fromUserTestFactory")
     void testDeserialize(String testName, UserDto userDto, String jsonContent) throws Exception {
-        System.err.println(this.jacksonTester.parse(jsonContent).getObject());
-        System.err.println(userDto);
-
         assertThat(this.jacksonTester.parse(jsonContent).getObject()).isEqualTo(userDto);
     }
 }
