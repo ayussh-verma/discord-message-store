@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  get-sha-tag:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ fromJSON(vars.SHORT_TIMEOUT) }}
+    outputs:
+      tag: ${{ steps.sha-tag.outputs.sha-tag }}
+    steps:
+      - name: Get the short SHA tag
+        id: sha-tag
+        run: |
+          tag=$(cut -c 1-7 <<< $GITHUB_SHA)
+          echo "sha-tag=$tag" >> $GITHUB_OUTPUT
+
+  ci:
+    needs: get-sha-tag
+
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ fromJSON(vars.MODERATE_TIMEOUT) }}
+    env:
+      MAVEN_ARGS: "--threads 1C --no-transfer-progress --fail-at-end --show-version --batch-mode"
+      SHOULD_BUILD: ${{ github.ref == 'refs/heads/main' }}
+    permissions:
+      packages: write
+  
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: temurin
+          cache: maven
+
+      # All the maven steps can be combined into one step but for the sake of clarity they are separated here.
+      # TODO: Figure out how to not repeat the maven compile outputs, and separate this workflow into multiple files.
+      - name: Compile code
+        run: ./mvnw compile -DskipTests
+
+      - name: Run tests
+        run: ./mvnw test
+
+      - name: Build a cloud native image
+        if: ${{ env.SHOULD_BUILD }}
+        run: ./mvnw spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName=disc-msg-store:latest
+
+      - name: Login to Github Container Registry
+        if: ${{ env.SHOULD_BUILD }}
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag image
+        if: ${{ env.SHOULD_BUILD }}
+        run: |
+          docker tag disc-msg-store:latest ghcr.io/${{ github.repository }}:latest
+          docker tag disc-msg-store:latest ghcr.io/${{ github.repository }}:${{ needs.get-sha-tag.outputs.tag }}
+
+      - name: Push image
+        if: ${{ env.SHOULD_BUILD }}
+        run: |
+          docker push ghcr.io/${{ github.repository }}:latest
+          docker push ghcr.io/${{ github.repository }}:${{ needs.get-sha-tag.outputs.tag }}

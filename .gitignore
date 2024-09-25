@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 bindings/
 src/main/resources/application-override.properties
+.actrc
 
 ### STS ###
 .apt_generated
